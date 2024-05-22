@@ -59,7 +59,7 @@ jobs:
           
           cd dist
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-          npm publish
+          npm publish --registry=https://registry.npmjs.org
 
       - name: Up to Date Check
         if: env.LAST_RELEASED_PACKAGE_VERSION == env.PACKAGE_VERSION

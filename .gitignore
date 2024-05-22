@@ -2,3 +2,4 @@
 dist/
 check/
 gen/
+*.secrets
