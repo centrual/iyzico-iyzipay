@@ -1,8 +1,7 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
-  version: 0.1.0
+  version: 0.1.1
   title: Iyzico API
-  summary: Iyzico API
   description: Iyzico Open API Declaration
   contact:
     name: Oğuz Özcan
@@ -682,10 +681,7 @@ components:
               customerReferenceCode:
                 type: string
               subscriptionStatus:
-                type: string
-                enum:
-                  - PENDING
-                  - ACTIVE
+                $ref: '#/components/schemas/SubscriptionStatusEnum'
               trialDays:
                 type: integer
               trialStartDate:
