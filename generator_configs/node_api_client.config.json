@@ -1,0 +1,16 @@
+{
+  "supportsES6": true,
+  "enumPropertyNaming": "UPPERCASE",
+  "prependFormOrBodyParameters": true,
+  "withInterfaces": true,
+  "withSeparateModelsAndApi": true,
+  "apiPackage": "api",
+  "modelPackage": "models",
+  "npmName": "iyzico-iyzipay",
+  "npmRepository": "git+https://github.com/centrual/iyzico-iyzipay.git",
+  "npmVersion": "1.0.0",
+  "withoutPrefixEnums": true,
+  "gitHost": "github.com",
+  "gitUserId": "centrual",
+  "gitRepoId": "iyzico-iyzipay"
+}

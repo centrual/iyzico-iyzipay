@@ -1,0 +1,66 @@
+name: "Deploy Typescript Axios API Client Library"
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  OPEN_API_PACKAGE_NAME: "iyzico-iyzipay"
+  OPEN_API_FILE_PATH: "./Iyzico-API.yaml"
+  OPEN_API_GENERATE_CONFIG: "./generator_configs/node_api_client.config.json"
+  OPEN_API_GENERATE_DIRECTORY: "./node_api_client"
+
+jobs:
+  deploy_npm_package:
+    runs-on: ubuntu-latest
+    container:
+      image: node:22-alpine
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Environment
+        run: |
+          apk --no-cache add curl openjdk11 jq
+          yarn global add @openapitools/openapi-generator-cli
+
+      - name: Check Versions
+        run: |
+          LAST_RELEASED_PACKAGE_VERSION=$(yarn info $OPEN_API_PACKAGE_NAME version 2>/dev/null | awk 'NR==2')
+          [ -z "$LAST_RELEASED_PACKAGE_VERSION" ] && LAST_RELEASED_PACKAGE_VERSION=""
+          PACKAGE_VERSION=$(grep 'version:' "$OPEN_API_FILE_PATH" | awk '{print $2}' | tr -d "\"'")
+          echo "PACKAGE_VERSION: $PACKAGE_VERSION"
+          echo "LAST_RELEASED_PACKAGE_VERSION: $LAST_RELEASED_PACKAGE_VERSION"
+          echo "LAST_RELEASED_PACKAGE_VERSION=$LAST_RELEASED_PACKAGE_VERSION" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+
+      - name: Generate and Build Package
+        if: env.LAST_RELEASED_PACKAGE_VERSION != env.PACKAGE_VERSION
+        run: |
+          openapi-generator-cli generate -i "$OPEN_API_FILE_PATH" -g typescript-axios -c "$OPEN_API_GENERATE_CONFIG" -o "$OPEN_API_GENERATE_DIRECTORY"
+          cd "$OPEN_API_GENERATE_DIRECTORY"
+          
+          jq --arg OPEN_API_PACKAGE_NAME "$OPEN_API_PACKAGE_NAME" '.name = $OPEN_API_PACKAGE_NAME' package.json > tmpfile && mv tmpfile package.json
+          sed -i 's/OpenAPI\-Generator Contributors/Oğuz Özcan <oguz.ozcan@vennyx\.com>/' package.json
+          sed -i 's/    "prepare": "npm run build"//' package.json
+          sed -i 's/outDir dist\/",/outDir dist\/"/' package.json
+          sed -i "s/1\.0\.0/$PACKAGE_VERSION/" package.json
+          sed -i 's/\.\/dist\//\.\//' package.json
+          sed -i 's/\.esm\.json",/\.esm\.json"/' package.json
+          sed -i 's/\.",/\.", "moduleResolution": "Node",/' tsconfig.json
+          
+          yarn add -E axios@latest
+          yarn add -E -D @types/node@latest typescript@latest
+          yarn build || true
+          
+          cp package.json ./dist/package.json
+          cp README.md ./dist/README.md
+          
+          cd dist
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm publish
+
+      - name: Up to Date Check
+        if: env.LAST_RELEASED_PACKAGE_VERSION == env.PACKAGE_VERSION
+        run: echo "Already up to date"
