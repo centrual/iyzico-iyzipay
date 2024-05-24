@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.2
+  version: 0.1.3
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -365,13 +365,12 @@ components:
                 type: boolean
                 description: Eğer TRUE gönderilir ise deneme süreci dahil edilir.
               upgradePeriod:
-                type: string
-                description: Abonelik güncelleme tarihi.
-                format: date-time
+                $ref: '#/components/schemas/UpgradePeriodEnum'
               newPricingPlanReferenceCode:
                 type: string
                 description: Yeni pricing plan referens numarası.
             required:
+              - upgradePeriod
               - newPricingPlanReferenceCode
     ListSubscriptionsRequest:
       content:
@@ -874,6 +873,13 @@ components:
         - PENDING
         - ACTIVE
       title: SubscriptionStatusEnum
+    UpgradePeriodEnum:
+      type: string
+      enum:
+        - NOW
+        - NEXT_PERIOD
+      title: UpgradePeriodEnum
+      description: UpgradePeriodEnum
     ApiResponseStatusEnum:
       type: string
       enum:
