@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.1
+  version: 0.1.2
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -358,9 +358,6 @@ components:
           schema:
             type: object
             properties:
-              subscriptionReferenceCode:
-                type: string
-                description: Eşsiz abonelik referans numarası
               resetRecurrenceCount:
                 type: boolean
                 description: Eğer TRUE gönderilirse ve yeni plan recurrence count değerine sahipse abonelik sonlanma süresi yeni değere göre hesaplanır. Eğer FALSE gönderilirse önceki planın sonlanma tarihi yeni plana aktarılır.
@@ -375,7 +372,6 @@ components:
                 type: string
                 description: Yeni pricing plan referens numarası.
             required:
-              - subscriptionReferenceCode
               - newPricingPlanReferenceCode
     ListSubscriptionsRequest:
       content:
