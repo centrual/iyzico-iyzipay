@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.9
+  version: 0.1.10
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -62,7 +62,7 @@ paths:
   '/v2/subscription/checkoutform/{token}':
     post:
       tags:
-        - Subscriptions
+        - Subscription Initialization
       summary: Check Subscription Checkout Form
       description: Ödeme Formu Sonucunu Alma
       operationId: check-subscription-checkout-form
@@ -640,6 +640,29 @@ paths:
           description: Sandbox
         - url: 'https://api.iyzipay.com'
           description: Production
+  /v2/subscription/initialize:
+    post:
+      tags:
+        - Subscription Initialization
+      summary: Initialize Subscription
+      description: "Üye iş yerleri aşağıdaki parametreleri göndererek abonelik başlatabilir.\r\n\r\nNOT : Eğer yeni bir kart ile abonelik başlatılacaksa kart bilgileri ile birlikte registerConsumerCard parametresinin true gönderilmesi gerekir. Ayrıca müşteriden kartının iyzico ortamında saklanacağı ile ilgili onay alınmalıdır.\r\n\r\nEğer saklı kartla abonelik başlatılacaksa ucsToken, cardToken, consumerToken bilgileri gönderilmelidir."
+      operationId: initialize-subscription
+      requestBody:
+        $ref: '#/components/requestBodies/InitializeSubscriptionRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/InitializeSubscriptionResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
 tags:
   - name: Operations
     description: Operasyonlar
@@ -817,6 +840,14 @@ components:
             allOf:
               - $ref: '#/components/schemas/LocaleAndConversationId'
               - $ref: '#/components/schemas/UpdateSubscriptionCustomerRequestFields'
+    InitializeSubscriptionRequest:
+      description: InitializeSubscriptionRequest
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/LocaleAndConversationId'
+              - $ref: '#/components/schemas/InitializeSubscriptionRequestFields'
   securitySchemes:
     Authorization:
       type: apiKey
@@ -1128,6 +1159,14 @@ components:
             allOf:
               - $ref: '#/components/schemas/StatusAndSystemTime'
               - $ref: '#/components/schemas/ListSubscriptionCustomersResponseFields'
+    InitializeSubscriptionResponse:
+      description: InitializeSubscriptionResponse
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - $ref: '#/components/schemas/Subscription'
   schemas:
     LocaleAndConversationId:
       type: object
@@ -1391,6 +1430,59 @@ components:
         - surname
         - billingAddress
         - shippingAddress
+    InitializeSubscriptionRequestFields:
+      type: object
+      title: InitializeSubscriptionRequestFields
+      description: InitializeSubscriptionRequestFields
+      properties:
+        pricingPlanReferenceCode:
+          type: string
+          format: uuid
+        subscriptionInitialStatus:
+          $ref: '#/components/schemas/EnumSubscriptionStatus'
+        customer:
+          $ref: '#/components/schemas/SubscriptionCustomer'
+        paymentCard:
+          $ref: '#/components/schemas/PaymentCard'
+      required:
+        - pricingPlanReferenceCode
+        - customer
+        - paymentCard
+    PaymentCard:
+      type: object
+      title: PaymentCard
+      description: PaymentCard
+      properties:
+        registerConsumerCard:
+          type: boolean
+          description: Kartın saklanması için gerekli değer. True gönderilmelidir. Kartın iyzico ortamında saklanacağının onayı alınamlı. detaylı bilgi için iyzico korumalı kart saklama dökümanını inceleyeniz.
+          default: false
+        consumerToken:
+          type: string
+          description: Saklı kartın kullanılabilmesi için kullanıcı için oluşturulmuş token. Geçerlilik süresi 30 dakikadır
+        cardToken:
+          type: string
+          description: Seçilen karta ait token.
+        ucsToken:
+          type: string
+          description: Kartın iyzico ortamında çözümlenmesi için kullanıcı için oluşturulmul değer. Geçerlilik süresi 30 dakikadır.
+        cardNumber:
+          type: string
+          description: Kredi kartı numarası. 1234123412341234 formatındadır.
+        expireMonth:
+          type: string
+          description: 12 veya 09 gibi yazılır
+        expireYear:
+          type: string
+          description: 2024 gibi yazılır
+        cvc:
+          type: string
+          description: Kart CVC kodu
+        cardHolderName:
+          type: string
+          description: Kart sahibi adı ve soyadı.
+      required:
+        - registerConsumerCard
     StatusAndSystemTime:
       type: object
       title: StatusAndSystemTime
