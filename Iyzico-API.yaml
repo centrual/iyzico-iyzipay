@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.6
+  version: 0.1.7
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -917,25 +917,9 @@ components:
                 checkoutFormContent: '<script type="text/javascript">if (typeof iyziInit == ''undefined'') {var iyziInit = {currency:"TRY",token:"d05b2a53-4c95-4131-a4de-6437e12cf3ef",price:100.00,locale:"tr",baseUrl:"https://sandbox-api.iyzipay.com", merchantGatewayBaseUrl:"https://sandbox-merchantgw.iyzipay.com", registerCardEnabled:false,bkmEnabled:false,bankTransferEnabled:false,bankTransferTimeLimit:{"value":5,"type":"day"},bankTransferRedirectUrl:"",bankTransferCustomUIProps:{},campaignEnabled:false,campaignMarketingUiDisplay:null,paymentSourceName:"",plusInstallmentResponseList:null,payWithIyzicoSingleTab:false,payWithIyzicoSingleTabV2:false,payWithIyzicoOneTab:false,newDesignEnabled:false,mixPaymentEnabled:true,creditCardEnabled:true,bankTransferAccounts:[],userCards:[],fundEnabled:false,memberCheckoutOtpData:{},force3Ds:false,isSandbox:true,storeNewCardEnabled:true,paymentWithNewCardEnabled:true,enabledApmTypes:[],payWithIyzicoUsed:false,payWithIyzicoEnabled:false,payWithIyzicoCustomUI:{},buyerName:"Oğuz",buyerSurname:"Özcan",merchantInfo:"",merchantName:"Sandbox Merchant Name - 3396477",cancelUrl:"",buyerProtectionEnabled:false,hide3DS:true,gsmNumber:"+905336870999",email:"oguz.ozcan@vennyx.com",checkConsumerDetail:{},subscriptionPaymentEnabled:true,ucsEnabled:true,fingerprintEnabled:false,payWithIyzicoFirstTab:false,creditEnabled:false,payWithIyzicoLead:false,goBackUrl:"",metadata : {"debitCardAllowed":"false"},createTag:function(){var iyziJSTag = document.createElement(''script'');iyziJSTag.setAttribute(''src'',''https://sandbox-static.iyzipay.com/checkoutform/v2/bundle.js?v=1716351771513'');document.head.appendChild(iyziJSTag);}};iyziInit.createTag();}</script><script type="text/javascript">if (typeof iyziUcsInit == ''undefined'') {var iyziUcsInit = {"baseUrl":"https://sandbox-api.iyzipay.com", "buyerProtectedConsumer":false,"ucsToken":"efa23c38-5027-4c5b-a2c0-6c23664bc5da","scriptType":"CONSUMER_WITH_CARD_EXIST","buyerProtectedMerchant":false,"maskedGsmNumber":"+90********99","ucsConsentRequiredConsumer":false,"gsmNumber":"+905336870999","merchantName":"Sandbox Merchant Name - 3396477", createTag: function () {var iyziUcsJSTag = document.createElement(''script''); iyziUcsJSTag.setAttribute(''src'', ''https://sandbox-static.iyzipay.com/checkoutform/v2/bundle.js?v=1716351771551''); document.head.appendChild(iyziUcsJSTag);}};if (typeof iyziInit == ''undefined'') { iyziUcsInit.createTag(); }}</script><script type="text/javascript">if (typeof iyziSubscriptionInit == ''undefined'') {var iyziSubscriptionInit = {"daysOfTrialPeriod":"0","intervalCount":"1","subscriptionState":"START_WITH_PAY","interval":"MONTHLY","pricingPlanPrice":"100.00"}}</script>'
                 tokenExpireTime: 1800
             allOf:
-              - type: object
-                required:
-                  - locale
-                  - conversationId
-                  - token
-                  - checkoutFormContent
-                  - tokenExpireTime
-                properties:
-                  locale:
-                    $ref: '#/components/schemas/EnumApiLocale'
-                  conversationId:
-                    type: string
-                  token:
-                    type: string
-                  checkoutFormContent:
-                    type: string
-                  tokenExpireTime:
-                    type: integer
               - $ref: '#/components/schemas/StatusAndSystemTime'
+              - $ref: '#/components/schemas/LocaleAndConversationId'
+              - $ref: '#/components/schemas/InitializeSubscriptionResponseFields'
     CheckSubscriptionCheckOutFormResponse:
       description: Check Subscription Check Out Form Response
       content:
@@ -1669,6 +1653,29 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/SubscriptionCustomer'
+    InitializeSubscriptionResponseFields:
+      title: InitializeSubscriptionResponseFields
+      x-stoplight:
+        id: 1va1zfodnw6ke
+      type: object
+      required:
+        - token
+        - checkoutFormContent
+        - tokenExpireTime
+      properties:
+        token:
+          type: string
+          x-stoplight:
+            id: qv7oq3echmhk1
+        checkoutFormContent:
+          type: string
+          x-stoplight:
+            id: g12wy144c8g8q
+        tokenExpireTime:
+          type: integer
+          x-stoplight:
+            id: rqz90ujxepehn
+      description: InitializeSubscriptionResponseFields
   parameters:
     page:
       name: page
