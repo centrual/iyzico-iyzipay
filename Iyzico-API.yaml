@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.5
+  version: 0.1.6
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -140,9 +140,9 @@ paths:
     post:
       tags:
         - Subscriptions
-      summary: Subscription Details
+      summary: Get Subscription
       description: Bir aboneliğin detaylarını getirir.
-      operationId: subscription-details
+      operationId: get-subscription
       parameters:
         - name: subscriptionReferenceCode
           in: path
@@ -152,7 +152,7 @@ paths:
             type: string
       responses:
         2XX:
-          $ref: '#/components/responses/SubscriptionDetailsResponse'
+          $ref: '#/components/responses/GetSubscriptionResponse'
         4XX:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
@@ -983,7 +983,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/StatusAndSystemTime'
-    SubscriptionDetailsResponse:
+    GetSubscriptionResponse:
       description: Example response
       content:
         application/json:
@@ -1004,8 +1004,13 @@ components:
                 createdDate: 1625246523
                 startDate: 1627858923
             allOf:
-              - $ref: '#/components/schemas/Subscription'
               - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Subscription'
     ListSubscriptionsResponse:
       description: Example response
       content:
