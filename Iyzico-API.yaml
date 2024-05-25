@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.8
+  version: 0.1.9
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -413,9 +413,9 @@ paths:
     post:
       tags:
         - Subscription Pricing Plan Management
-      summary: Create Subscription Plan
+      summary: Create Subscription Pricing Plan
       description: "Bir plan oluşturmak için, ürün referans numarası, isim, fiyat, para birimi, ödeme periyodu gibi aşağıda detayları paylaşılan parametrelerlerin gönderilmesi gerekir.\r\n\r\nBir aboneliğin deneme sürecinin olması istenirse trialPeriodDays parametresi kullanılabilir. Eğer bu parametre gönderilirse, belirtilen değer süresince abonelik başlatılmaz ve karttan hiçbir şekilde ödeme alınmaz.\r\n\r\nİstekte belirtilen Payment Interval parametresi ödeme periyodunu belirtir. Bir plan oluştururken “WEEKLY” parametresi gönderilirse, iyzico belirtilen tutarı her hafta karttan çekecektir. Bu periyodun özelleştirilmesi de mümkündür. Örneğin ödemenin 2 haftada bir alınmasını isterseniz, PaymentInterval değerini “WEEKLY” ve paymentIntervalCount değerini 2 olarak göndermeniz gerekmektedir.\r\n\r\nNOT : planPaymentType parametresi zorunludur ve şu an için sadece RECURRING değerini alabilir."
-      operationId: create-subscription-plan
+      operationId: create-subscription-pricing-plan
       parameters:
         - name: subscriptionProductReferenceCode
           in: path
