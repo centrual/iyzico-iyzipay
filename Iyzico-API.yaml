@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.3
+  version: 0.1.4
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -30,39 +30,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-      security:
-        - Authorization: []
-      servers:
-        - url: 'https://sandbox-api.iyzipay.com'
-          description: Sandbox
-        - url: 'https://api.iyzipay.com'
-          description: Production
-  '/v2/subscription/subscriptions/{subscriptionReferenceCode}/cancel':
-    post:
-      tags:
-        - Subscriptions
-      summary: Cancel Subscription
-      description: Bir aboneliği iptal etmeye yarar
-      operationId: cancel-subscription
-      parameters:
-        - name: subscriptionReferenceCode
-          in: path
-          description: Reference code of the subscription
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        $ref: '#/components/requestBodies/CancelSubscriptionRequest'
-      responses:
-        2XX:
-          $ref: '#/components/responses/CancelSubscriptionResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-      security:
-        - Authorization: []
+      security: []
       servers:
         - url: 'https://sandbox-api.iyzipay.com'
           description: Sandbox
@@ -119,6 +87,114 @@ paths:
           description: Sandbox
         - url: 'https://api.iyzipay.com'
           description: Production
+  /operation/retry:
+    post:
+      tags:
+        - Operations
+      summary: Retry Payment
+      description: İyzico'nun bir ödemeyi tekrar tahsil etmeye çalışmasını sağlar.
+      operationId: retry-payment
+      requestBody:
+        $ref: '#/components/requestBodies/RetryPaymentRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/RetryPaymentResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  /v2/subscription/subscriptions:
+    post:
+      tags:
+        - Subscriptions
+      summary: List Subscriptions
+      description: Abonelikleri listeler
+      operationId: list-subscriptions
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/count'
+      requestBody:
+        $ref: '#/components/requestBodies/ListSubscriptionsRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/ListSubscriptionsResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  '/v2/subscription/subscriptions/{subscriptionReferenceCode}':
+    post:
+      tags:
+        - Subscriptions
+      summary: Subscription Details
+      description: Bir aboneliğin detaylarını getirir.
+      operationId: subscription-details
+      parameters:
+        - name: subscriptionReferenceCode
+          in: path
+          description: Abonelik referans kodu
+          required: true
+          schema:
+            type: string
+      responses:
+        2XX:
+          $ref: '#/components/responses/SubscriptionDetailsResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  '/v2/subscription/subscriptions/{subscriptionReferenceCode}/cancel':
+    post:
+      tags:
+        - Subscriptions
+      summary: Cancel Subscription
+      description: Bir aboneliği iptal etmeye yarar
+      operationId: cancel-subscription
+      parameters:
+        - name: subscriptionReferenceCode
+          in: path
+          description: Reference code of the subscription
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: '#/components/requestBodies/CancelSubscriptionRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/CancelSubscriptionResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
   '/v2/subscription/subscriptions/{subscriptionReferenceCode}/activate':
     post:
       tags:
@@ -136,29 +212,6 @@ paths:
       responses:
         2XX:
           $ref: '#/components/responses/ActivateSubscriptionResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-      security:
-        - Authorization: []
-      servers:
-        - url: 'https://sandbox-api.iyzipay.com'
-          description: Sandbox
-        - url: 'https://api.iyzipay.com'
-          description: Production
-  /operation/retry:
-    post:
-      tags:
-        - Operations
-      summary: Retry Payment
-      description: İyzico'nun bir ödemeyi tekrar tahsil etmeye çalışmasını sağlar.
-      operationId: retry-payment
-      requestBody:
-        $ref: '#/components/requestBodies/RetryPaymentRequest'
-      responses:
-        2XX:
-          $ref: '#/components/responses/RetryPaymentResponse'
         4XX:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
@@ -200,57 +253,6 @@ paths:
           description: Sandbox
         - url: 'https://api.iyzipay.com'
           description: Production
-  '/v2/subscription/subscriptions/{subscriptionReferenceCode}':
-    post:
-      tags:
-        - Subscriptions
-      summary: Subscription Details
-      description: Bir aboneliğin detaylarını getirir.
-      operationId: subscription-details
-      parameters:
-        - name: subscriptionReferenceCode
-          in: path
-          description: Abonelik referans kodu
-          required: true
-          schema:
-            type: string
-      responses:
-        2XX:
-          $ref: '#/components/responses/SubscriptionDetailsResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-      security:
-        - Authorization: []
-      servers:
-        - url: 'https://sandbox-api.iyzipay.com'
-          description: Sandbox
-        - url: 'https://api.iyzipay.com'
-          description: Production
-  /v2/subscription/subscriptions:
-    post:
-      tags:
-        - Subscriptions
-      summary: List Subscriptions
-      description: Abonelikleri listeler
-      operationId: list-subscriptions
-      requestBody:
-        $ref: '#/components/requestBodies/ListSubscriptionsRequest'
-      responses:
-        2XX:
-          $ref: '#/components/responses/ListSubscriptionsResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-      security:
-        - Authorization: []
-      servers:
-        - url: 'https://sandbox-api.iyzipay.com'
-          description: Sandbox
-        - url: 'https://api.iyzipay.com'
-          description: Production
   /v2/subscription/card-update/checkoutform/initialize:
     post:
       tags:
@@ -263,6 +265,370 @@ paths:
       responses:
         2XX:
           $ref: '#/components/responses/ChangeCreditCardUsedInSubscriptionResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  /v2/subscription/products:
+    post:
+      tags:
+        - Subscription Product Management
+      summary: Create Subscription Product
+      description: Subscription API ödeme planlarına göre tekrarlı ödeme alır ve her ödeme planı en az bir ürüne bağlıdır. Ürün sayısında herhangi bir sınırlama yoktur ve sadece isim bilgisi gönderilerek bir ürün oluşturulabilir.
+      operationId: create-subscription-product
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSubscriptionProductRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/CreateSubscriptionProductResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+    get:
+      tags:
+        - Subscription Product Management
+      summary: List Subscription Products
+      description: Ürün listeleme tüm ürünlere ve ürünlere bağlı planlara ulaşmak için kullanılır. Cevap süresini kısaltmak ve cevap boyutunu kısaltmak için sayfalama metodu kullanulmıştır. Bu sayede ürün listesini sayfa sayfa hızlıca alabilirsiniz.
+      operationId: list-subscription-products
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/count'
+      responses:
+        2XX:
+          $ref: '#/components/responses/ListSubscriptionProductsResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  '/v2/subscription/products/{subscriptionProductReferenceCode}':
+    post:
+      tags:
+        - Subscription Product Management
+      summary: Update Subscription Product
+      description: 'Bir ürünün isim ve açıklama bilgileri hem API hem de iyzico merchant paneli üzerinden düzenlenebilir. API üzerinden bu işlemi yapabilmek için, ürüne ait eşsiz referans kodu kullanılmalıdır.'
+      operationId: update-subscription-product
+      parameters:
+        - name: subscriptionProductReferenceCode
+          in: path
+          description: Abonelik ürününün referans kodu
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateSubscriptionProductRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/UpdateSubscriptionProductResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+    delete:
+      tags:
+        - Subscription Product Management
+      summary: Delete Subscription Product
+      description: Ürünler kendilerine bağlı herhangi bir plan olmadıkça hem API hem de iyzico merchant panel üzerinden silinebilir.
+      operationId: delete-subscription-product
+      parameters:
+        - name: subscriptionProductReferenceCode
+          in: path
+          description: Abonelik ürününün referans kodu
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        2XX:
+          $ref: '#/components/responses/DeleteSubscriptionProductResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+    get:
+      tags:
+        - Subscription Product Management
+      summary: Get Subscription Product
+      description: Bir ürünün detaylarına API isteği ile ulaşılabilir. Bunun için gönderilen istekte ürün refereans kodunu belirtmek yeterlidir.
+      operationId: get-subscription-product
+      parameters:
+        - name: subscriptionProductReferenceCode
+          in: path
+          description: Abonelik ürününün referans kodu
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        2XX:
+          $ref: '#/components/responses/GetSubscriptionProductResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  '/v2/subscription/products/{subscriptionProductReferenceCode}/pricing-plans':
+    post:
+      tags:
+        - Subscription Pricing Plan Management
+      summary: Create Subscription Plan
+      description: "Bir plan oluşturmak için, ürün referans numarası, isim, fiyat, para birimi, ödeme periyodu gibi aşağıda detayları paylaşılan parametrelerlerin gönderilmesi gerekir.\r\n\r\nBir aboneliğin deneme sürecinin olması istenirse trialPeriodDays parametresi kullanılabilir. Eğer bu parametre gönderilirse, belirtilen değer süresince abonelik başlatılmaz ve karttan hiçbir şekilde ödeme alınmaz.\r\n\r\nİstekte belirtilen Payment Interval parametresi ödeme periyodunu belirtir. Bir plan oluştururken “WEEKLY” parametresi gönderilirse, iyzico belirtilen tutarı her hafta karttan çekecektir. Bu periyodun özelleştirilmesi de mümkündür. Örneğin ödemenin 2 haftada bir alınmasını isterseniz, PaymentInterval değerini “WEEKLY” ve paymentIntervalCount değerini 2 olarak göndermeniz gerekmektedir.\r\n\r\nNOT : planPaymentType parametresi zorunludur ve şu an için sadece RECURRING değerini alabilir."
+      operationId: create-subscription-plan
+      parameters:
+        - name: subscriptionProductReferenceCode
+          in: path
+          description: Abonelik ürününün referans kodu
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSubscriptionPlanRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/CreateSubscriptionPlanResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+    get:
+      tags:
+        - Subscription Pricing Plan Management
+      summary: List Subscription Pricing Plans
+      description: Tüm planlar ve bağlı olduğu ürünler bu istek sonucu görülebilir. Cevap sayfalar halinde iletilir
+      operationId: list-subscription-pricing-plans
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/count'
+        - name: subscriptionProductReferenceCode
+          in: path
+          description: Abonelik ürününün referans kodu
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        2XX:
+          $ref: '#/components/responses/ListSubscriptionPricingPlansResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  '/v2/subscription/pricing-plans/{pricingPlanReferenceCode}':
+    post:
+      tags:
+        - Subscription Pricing Plan Management
+      summary: Update Subscription Pricing Plan
+      description: Bu metod sadece name ve trialPeriodDays parametrelerinin güncellenmesine izin verir. Plan güncellemesi yapabilmek için o plana ait eşsiz referans kodu kullanılmalıdır. Güncellemenin hem API hem de iyzico merchant paneli üzerinden yapılması mümkündür.
+      operationId: update-subscription-pricing-plan
+      parameters:
+        - name: pricingPlanReferenceCode
+          in: path
+          description: Abonelik ödeme planı referans kodu
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateSubscriptionPricingPlanRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/UpdateSubscriptionPricingPlanResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+    delete:
+      tags:
+        - Subscription Pricing Plan Management
+      summary: Delete Subscription Pricing Plan
+      description: Bir plan ancak kendisine bağlı herhangi bir abonelik yoksa silinebilir. Silme işlemi için üye işeyeri plan referans kodunu kullanmalıdır. İstek success veya failure olarak cevaplanır. Success ise plan başaırı ile silinmiş demektir.
+      operationId: delete-subscription-pricing-plan
+      parameters:
+        - name: pricingPlanReferenceCode
+          in: path
+          description: Abonelik ödeme planı referans kodu
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        2XX:
+          $ref: '#/components/responses/DeleteSubscriptionPricingPlanResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+    get:
+      tags:
+        - Subscription Pricing Plan Management
+      summary: Get Subscription Pricing Plan
+      description: Üye işyerleri bir planın tüm detaylarını hem merchant panelinden hem de API istekleri üzerinden görebilir.
+      operationId: get-subscription-pricing-plan
+      parameters:
+        - name: pricingPlanReferenceCode
+          in: path
+          description: Abonelik ödeme planı referans kodu
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        2XX:
+          $ref: '#/components/responses/GetSubscriptionPricingPlanResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  /v2/subscription/customers:
+    get:
+      tags:
+        - Subscription Customer Management
+      summary: List Subscription Customers
+      description: Tüm aboneleri ve detaylarını bu istek ile listeleyebilirsiniz
+      operationId: list-subscription-customers
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/count'
+      responses:
+        2XX:
+          $ref: '#/components/responses/ListSubscriptionCustomersResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+  '/v2/subscription/customers/{subscriptionCustomerReferenceCode}':
+    post:
+      tags:
+        - Subscription Customer Management
+      summary: Update Subscription Customer
+      description: Bir abonenin tüm detayları API isteği ile güncellenebilir. Bunun için aboneye ait referans kodu ve güncellemek istenen parametreler ile güncelleme isteği atılması gereklidir.
+      operationId: update-subscription-customer
+      parameters:
+        - name: subscriptionCustomerReferenceCode
+          in: path
+          description: Subscription customer reference code
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateSubscriptionCustomerRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/UpdateSubscriptionCustomerResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
+    get:
+      tags:
+        - Subscription Customer Management
+      summary: Get Subscription Customer
+      description: Bir aboneninin tüm detayları o aboneye ait referans kodu ile çağırılabilir.
+      operationId: get-subscription-customer
+      parameters:
+        - name: subscriptionCustomerReferenceCode
+          in: path
+          description: Subscription customer reference code
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        2XX:
+          $ref: '#/components/responses/GetSubscriptionCustomerResponse'
         4XX:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
@@ -290,21 +656,29 @@ tags:
   - name: Testing
     description: Testing
 components:
+  parameters:
+    page:
+      name: page
+      in: query
+      description: Page number
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    count:
+      name: count
+      in: query
+      description: Count of items
+      required: true
+      schema:
+        type: integer
+        minimum: 1
   requestBodies:
     CancelSubscriptionRequest:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              locale:
-                $ref: '#/components/schemas/ApiLocaleEnum'
-              conversationId:
-                type: string
-            x-examples:
-              Example 1:
-                locale: tr
-                conversationId: string
+            $ref: '#/components/schemas/LocaleAndConversationId'
     InitializeSubscriptionCheckoutFormRequest:
       content:
         application/json:
@@ -315,7 +689,7 @@ components:
                 type: string
                 format: uuid
               locale:
-                $ref: '#/components/schemas/ApiLocaleEnum'
+                $ref: '#/components/schemas/EnumApiLocale'
               conversationId:
                 type: string
               callbackUrl:
@@ -324,7 +698,7 @@ components:
               customer:
                 $ref: '#/components/schemas/SubscriptionCustomer'
               subscriptionInitialStatus:
-                $ref: '#/components/schemas/SubscriptionStatusEnum'
+                $ref: '#/components/schemas/EnumSubscriptionStatus'
             required:
               - pricingPlanReferenceCode
               - callbackUrl
@@ -365,7 +739,7 @@ components:
                 type: boolean
                 description: Eğer TRUE gönderilir ise deneme süreci dahil edilir.
               upgradePeriod:
-                $ref: '#/components/schemas/UpgradePeriodEnum'
+                $ref: '#/components/schemas/EnumUpgradePeriod'
               newPricingPlanReferenceCode:
                 type: string
                 description: Yeni pricing plan referens numarası.
@@ -394,7 +768,7 @@ components:
                 type: string
                 format: date
               subscriptionStatus:
-                $ref: '#/components/schemas/SubscriptionStatusEnum'
+                $ref: '#/components/schemas/EnumSubscriptionStatus'
               pricingPlanReferenceCode:
                 type: string
                 description: ( Opsiyonel ) Pricing plan referans kodu
@@ -410,20 +784,126 @@ components:
       content:
         application/json:
           schema:
+            allOf:
+              - $ref: '#/components/schemas/LocaleAndConversationId'
+              - type: object
+                properties:
+                  callBackUrl:
+                    type: string
+                    format: uri
+                  subscriptionReferenceCode:
+                    type: string
+                    format: uuid
+                required:
+                  - callBackUrl
+                  - subscriptionReferenceCode
+    CreateSubscriptionProductRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              conversationId:
+                type: string
+              locale:
+                $ref: '#/components/schemas/EnumApiLocale'
+              description:
+                type: string
+              name:
+                type: string
+            required:
+              - name
+    UpdateSubscriptionProductRequest:
+      content:
+        application/json:
+          schema:
             type: object
             properties:
               locale:
-                $ref: '#/components/schemas/ApiLocaleEnum'
-              callBackUrl:
+                $ref: '#/components/schemas/EnumApiLocale'
+              description:
                 type: string
-                format: uri
-              subscriptionReferenceCode:
-                type: string
-              conversationId:
+              name:
                 type: string
             required:
-              - callBackUrl
-              - subscriptionReferenceCode
+              - name
+    CreateSubscriptionPlanRequest:
+      description: CreateSubscriptionPlanRequest
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/LocaleAndConversationId'
+              - type: object
+                properties:
+                  name:
+                    type: string
+                    description: Plan adı. Ödeme planı ile ilgili kısa bir bilgilendirme olacak şekilde değer girilmelidir.
+                  recurrenceCount:
+                    type: integer
+                    description: 'Ödeme periyodunun kaç kez tekrarlanacağını belirler. Örneğin ayda bir ödeme alan planınıza bu değeri 12 olarak girerseniz, 12 ay boyunca ödeme alınacaktır.'
+                  planPaymentType:
+                    $ref: '#/components/schemas/EnumSubscriptionPlanPaymentType'
+                  trialPeriodDays:
+                    type: integer
+                    description: 'Deneme süresi veya ücretsiz kullanım süresi olarak kullanılır. Bu değer girilirse, ilk ödeme girilen gün sayısı sonunda alınır.'
+                  paymentIntervalCount:
+                    type: integer
+                    description: 'Ödeme periodunun hangi sıklıkta olacağını belirler. Örneğin paymentInterval değeri WEEKLY, paymentIntervalCount değeri 2 olursa, ödemeler 2 hafta bir alınır.'
+                  paymentInterval:
+                    $ref: '#/components/schemas/EnumSubscriptionPricingPlanInterval'
+                  currencyCode:
+                    $ref: '#/components/schemas/EnumCurrencyUnit'
+                  price:
+                    type: number
+                    format: double
+                required:
+                  - name
+                  - planPaymentType
+                  - paymentIntervalCount
+                  - paymentInterval
+                  - currencyCode
+                  - price
+    UpdateSubscriptionPricingPlanRequest:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/LocaleAndConversationId'
+              - type: object
+                properties:
+                  name:
+                    type: string
+                    description: Plan adı. Ödeme planı ile ilgili kısa bir bilgilendirme olacak şekilde değer girilmelidir.
+                  trialPeriodDays:
+                    type: integer
+                    description: 'Deneme süresi veya ücretsiz kullanım süresi olarak kullanılır. Bu değer girilirse, ilk ödeme girilen gün sayısı sonunda alınır.'
+                required:
+                  - name
+    UpdateSubscriptionCustomerRequest:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/LocaleAndConversationId'
+              - type: object
+                properties:
+                  name:
+                    type: string
+                  identityNumber:
+                    type: string
+                  surname:
+                    type: string
+                  billingAddress:
+                    $ref: '#/components/schemas/SubscriptionCustomerAddress'
+                  shippingAddress:
+                    $ref: '#/components/schemas/SubscriptionCustomerAddress'
+                required:
+                  - name
+                  - identityNumber
+                  - surname
+                  - billingAddress
+                  - shippingAddress
   securitySchemes:
     Authorization:
       type: apiKey
@@ -435,18 +915,14 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              locale:
-                $ref: '#/components/schemas/ApiLocaleEnum'
-              systemTime:
-                type: integer
-            required:
-              - status
-              - locale
-              - systemTime
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  locale:
+                    $ref: '#/components/schemas/EnumApiLocale'
+                required:
+                  - locale
             x-examples:
               Example 1:
                 status: success
@@ -502,9 +978,9 @@ components:
               errorMessage:
                 type: string
               status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
+                $ref: '#/components/schemas/EnumApiResponseStatus'
               locale:
-                $ref: '#/components/schemas/ApiLocaleEnum'
+                $ref: '#/components/schemas/EnumApiLocale'
               systemTime:
                 type: integer
             required:
@@ -514,50 +990,38 @@ components:
               - errorMessage
               - status
               - locale
+              - systemTime
     CancelSubscriptionResponse:
       description: Cancel Subscription Response
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              systemTime:
-                type: integer
-            x-examples:
-              Example 1:
-                status: success
-                systemTime: 1687096973255
+            $ref: '#/components/schemas/StatusAndSystemTime'
     InitializeSubscriptionCheckoutFormResponse:
       description: Abonelik için başlatılan iyzico checkout formunun cevabıdır.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              locale:
-                $ref: '#/components/schemas/ApiLocaleEnum'
-              systemTime:
-                type: integer
-              conversationId:
-                type: string
-              token:
-                type: string
-              checkoutFormContent:
-                type: string
-              tokenExpireTime:
-                type: integer
-            required:
-              - status
-              - locale
-              - systemTime
-              - conversationId
-              - token
-              - checkoutFormContent
-              - tokenExpireTime
+            allOf:
+              - type: object
+                properties:
+                  locale:
+                    $ref: '#/components/schemas/EnumApiLocale'
+                  conversationId:
+                    type: string
+                  token:
+                    type: string
+                  checkoutFormContent:
+                    type: string
+                  tokenExpireTime:
+                    type: integer
+                required:
+                  - locale
+                  - conversationId
+                  - token
+                  - checkoutFormContent
+                  - tokenExpireTime
+              - $ref: '#/components/schemas/StatusAndSystemTime'
             x-examples:
               Example 1:
                 status: success
@@ -572,18 +1036,14 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              systemTime:
-                type: integer
-              data:
-                $ref: '#/components/schemas/SubscriptionFormData'
-            required:
-              - status
-              - systemTime
-              - data
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Subscription'
+                required:
+                  - data
             x-examples:
               Example 1:
                 status: success
@@ -605,102 +1065,27 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              systemTime:
-                type: integer
-            required:
-              - status
-              - systemTime
-            x-examples:
-              Example 1:
-                status: success
-                systemTime: 1687096973255
+            $ref: '#/components/schemas/StatusAndSystemTime'
     RetryPaymentResponse:
       description: Retry payment response
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              systemTime:
-                type: integer
-            required:
-              - status
-              - systemTime
-            x-examples:
-              Example 1:
-                status: success
-                systemTime: 1687096973255
+            $ref: '#/components/schemas/StatusAndSystemTime'
     UpgradeSubscriptionResponse:
       description: Upgrade subscription response
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              systemTime:
-                type: integer
-            required:
-              - status
-              - systemTime
-            x-examples:
-              Example 1:
-                status: success
-                systemTime: 1687096973255
+            $ref: '#/components/schemas/StatusAndSystemTime'
     SubscriptionDetailsResponse:
       description: Example response
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              systemTime:
-                type: integer
-              referenceCode:
-                type: string
-              parentReferenceCode:
-                type: string
-              pricingPlanReferenceCode:
-                type: string
-              customerEmail:
-                type: string
-              customerReferenceCode:
-                type: string
-              subscriptionStatus:
-                $ref: '#/components/schemas/SubscriptionStatusEnum'
-              trialDays:
-                type: integer
-              trialStartDate:
-                type: integer
-              trialEndDate:
-                type: integer
-              createdDate:
-                type: integer
-              startDate:
-                type: integer
-              endDate:
-                type: integer
-            required:
-              - status
-              - systemTime
-              - referenceCode
-              - parentReferenceCode
-              - pricingPlanReferenceCode
-              - customerEmail
-              - customerReferenceCode
-              - subscriptionStatus
-              - createdDate
-              - startDate
-              - endDate
+            allOf:
+              - $ref: '#/components/schemas/Subscription'
+              - $ref: '#/components/schemas/StatusAndSystemTime'
             x-examples:
               Example 1:
                 status: success
@@ -721,18 +1106,14 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              systemTime:
-                type: integer
-              data:
-                $ref: '#/components/schemas/ListSubscriptionsData'
-            required:
-              - status
-              - systemTime
-              - data
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ListSubscriptionsPagination'
+                required:
+                  - data
             x-examples:
               Example 1:
                 status: success
@@ -747,25 +1128,21 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/components/schemas/ApiResponseStatusEnum'
-              systemTime:
-                type: integer
-              checkoutFormContent:
-                type: string
-              token:
-                type: string
-              tokenExpireTime:
-                type: integer
-                description: Saniye cinsindendir
-            required:
-              - status
-              - systemTime
-              - checkoutFormContent
-              - token
-              - tokenExpireTime
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  checkoutFormContent:
+                    type: string
+                  token:
+                    type: string
+                  tokenExpireTime:
+                    type: integer
+                    description: Saniye cinsindendir
+                required:
+                  - checkoutFormContent
+                  - token
+                  - tokenExpireTime
             x-examples:
               Example 1:
                 status: success
@@ -773,13 +1150,146 @@ components:
                 checkoutFormContent: '<script type="text/javascript">if (typeof iyziInit == ''undefined'') {var iyziInit = {currency:"TRY",token:"8e86b16e-9c0f-450d-a09d-0fd8a27e5197",price:1.00,locale:"tr",baseUrl:"https://sandbox-api.iyzipay.com", merchantGatewayBaseUrl:"https://sandbox-merchantgw.iyzipay.com", registerCardEnabled:false,bkmEnabled:false,bankTransferEnabled:false,bankTransferTimeLimit:{"value":5,"type":"day"},bankTransferRedirectUrl:"",bankTransferCustomUIProps:{},campaignEnabled:false,campaignMarketingUiDisplay:null,paymentSourceName:"",plusInstallmentResponseList:null,payWithIyzicoSingleTab:false,payWithIyzicoOneTab:false,mixPaymentEnabled:true,creditCardEnabled:true,bankTransferAccounts:[],userCards:[],fundEnabled:false,memberCheckoutOtpData:{},force3Ds:false,isSandbox:true,storeNewCardEnabled:true,paymentWithNewCardEnabled:true,enabledApmTypes:[],payWithIyzicoUsed:false,payWithIyzicoEnabled:false,payWithIyzicoCustomUI:{},buyerName:"Bünyamin",buyerSurname:"Yaşar",merchantInfo:"",merchantName:"Sandbox Merchant Name - 376927",cancelUrl:"",buyerProtectionEnabled:false,hide3DS:true,gsmNumber:"+905554443322",email:"kerem@altintas.com",checkConsumerDetail:{},subscriptionPaymentEnabled:true,ucsEnabled:true,fingerprintEnabled:false,payWithIyzicoFirstTab:false,creditEnabled:true,payWithIyzicoLead:false,goBackUrl:"",metadata : {"debitCardAllowed":"false"},createTag:function(){var iyziJSTag = document.createElement(''script'');iyziJSTag.setAttribute(''src'',''https://sandbox-static.iyzipay.com/checkoutform/v2/bundle.js?v=1687095783108'');document.head.appendChild(iyziJSTag);}};iyziInit.createTag();}</script><script type="text/javascript">if (typeof iyziUcsInit == ''undefined'') {var iyziUcsInit = {"baseUrl":"https://sandbox-api.iyzipay.com", "ucsToken":"28fac7ba-d34b-4e21-86a8-89785364d59f","scriptType":"UCS_CONSENT","buyerProtectedMerchant":false,"maskedGsmNumber":"+90****22","gsmNumber":"+905554443322","merchantName":"Sandbox Merchant Name - 376927", createTag: function () {var iyziUcsJSTag = document.createElement(''script''); iyziUcsJSTag.setAttribute(''src'', ''https://sandbox-static.iyzipay.com/checkoutform/v2/bundle.js?v=1687095783122''); document.head.appendChild(iyziUcsJSTag);}};if (typeof iyziInit == ''undefined'') { iyziUcsInit.createTag(); }}</script><script type="text/javascript">if (typeof iyziSubscriptionInit == ''undefined'') {var iyziSubscriptionInit = {"daysOfTrialPeriod":"30","intervalCount":"1","subscriptionState":"START_WITH_TRIAL_PERIOD","interval":"WEEKLY","recurrenceCount":"5","pricingPlanPrice":"30.00"}}</script>'
                 token: 8e86b16e-9c0f-450d-a09d-0fd8a27e5197
                 tokenExpireTime: 1800
+    CreateSubscriptionProductResponse:
+      description: CreateSubscriptionProductResponse
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SubscriptionProduct'
+                required:
+                  - data
+    UpdateSubscriptionProductResponse:
+      description: UpdateSubscriptionProductResponse
+      content:
+        application/json:
+          schema:
+            allOf: []
+    DeleteSubscriptionProductResponse:
+      description: DeleteSubscriptionProductResponse
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StatusAndSystemTime'
+    GetSubscriptionProductResponse:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StatusAndSystemTime'
+    ListSubscriptionProductsResponse:
+      description: ListSubscriptionProductsResponse
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ListSubscriptionProductsPagination'
+                required:
+                  - data
+    CreateSubscriptionPlanResponse:
+      description: CreateSubscriptionPlanResponse
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SubscriptionPricingPlan'
+                required:
+                  - data
+    UpdateSubscriptionPricingPlanResponse:
+      description: UpdateSubscriptionPricingPlanResponse
+      content:
+        application/json:
+          schema:
+            allOf: []
+    DeleteSubscriptionPricingPlanResponse:
+      description: Bu metod sadece name ve trialPeriodDays parametrelerinin güncellenmesine izin verir. Plan güncellemesi yapabilmek için o plana ait eşsiz referans kodu kullanılmalıdır. Güncellemenin hem API hem de iyzico merchant paneli üzerinden yapılması mümkündür.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StatusAndSystemTime'
+    GetSubscriptionPricingPlanResponse:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SubscriptionPricingPlan'
+                required:
+                  - data
+    ListSubscriptionPricingPlansResponse:
+      description: ListSubscriptionPricingPlansResponse
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ListSubscriptionPricingPlansPagination'
+                required:
+                  - data
+    UpdateSubscriptionCustomerResponse:
+      description: UpdateSubscriptionCustomerResponse
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SubscriptionCustomer'
+                required:
+                  - data
+    GetSubscriptionCustomerResponse:
+      description: GetSubscriptionCustomerResponse
+      content:
+        application/json:
+          schema:
+            allOf: []
+    ListSubscriptionCustomersResponse:
+      description: ListSubscriptionCustomersResponse
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ListSubscriptionCustomersPagination'
+                required:
+                  - data
   schemas:
-    ApiLocaleEnum:
+    LocaleAndConversationId:
+      type: object
+      title: LocaleAndConversationId
+      properties:
+        id:
+          type: string
+    EnumApiLocale:
       type: string
       enum:
         - tr
         - en
-      title: ApiLocaleEnum
+      title: EnumApiLocale
     SubscriptionCustomer:
       type: object
       title: Subscription Customer
@@ -810,7 +1320,6 @@ components:
           $ref: '#/components/schemas/SubscriptionCustomerAddress'
       required:
         - identityNumber
-        - gsmNumber
         - email
         - name
         - surname
@@ -867,42 +1376,89 @@ components:
           contactName: Oğuz Özcan
           city: Istanbul
           country: Turkey
-    SubscriptionStatusEnum:
+    EnumSubscriptionStatus:
       type: string
       enum:
         - PENDING
         - ACTIVE
-      title: SubscriptionStatusEnum
-    UpgradePeriodEnum:
+      title: EnumSubscriptionStatus
+    EnumUpgradePeriod:
       type: string
       enum:
         - NOW
         - NEXT_PERIOD
-      title: UpgradePeriodEnum
-      description: UpgradePeriodEnum
-    ApiResponseStatusEnum:
+      title: EnumUpgradePeriod
+      description: EnumUpgradePeriod
+    EnumSubscriptionPlanPaymentType:
+      type: string
+      enum:
+        - RECURRING
+      title: EnumSubscriptionPlanPaymentType
+    EnumSubscriptionPricingPlanInterval:
+      type: string
+      enum:
+        - HOURLY
+        - DAILY
+        - WEEKLY
+        - MONTHLY
+        - YEARLY
+      title: EnumSubscriptionPricingPlanInterval
+    EnumCurrencyUnit:
+      type: string
+      enum:
+        - TRY
+        - EUR
+        - USD
+        - IRR
+        - GBP
+        - NOK
+        - RUB
+        - CHF
+      title: EnumCurrencyUnit
+    StatusAndSystemTime:
+      type: object
+      title: StatusAndSystemTime
+      description: StatusAndSystemTime
+      properties:
+        status:
+          $ref: '#/components/schemas/EnumApiResponseStatus'
+        systemTime:
+          type: integer
+      required:
+        - status
+        - systemTime
+    EnumApiResponseStatus:
       type: string
       enum:
         - success
         - failure
-      title: ApiResponseStatusEnum
-    SubscriptionFormData:
+      title: EnumApiResponseStatus
+    Subscription:
       type: object
+      title: Subscription
+      description: Abonelik bilgisini barındırır
       properties:
         referenceCode:
           type: string
           description: Abonelik için üretilen eşsiz referans kodu.
+          format: uuid
         parentReferenceCode:
           type: string
           description: Abonelik güncellemelerinde üye işeyerinin eşleştirme yapılabileceği eşsiz referans kodu.
+          format: uuid
         pricingPlanReferenceCode:
           type: string
           description: Aboneliğe ait plan referans kodu.
+          format: uuid
         customerReferenceCode:
           type: string
           description: Müşteri bilgilerine istinaden oluşturulmuş eşsiz müşteri kodu. Bu kod email adresi baz alınarak oluşturulur ve müşteri işlemleri bu kod ile de yapılabilir.
+          format: uuid
+        customerEmail:
+          type: string
+          format: email
         subscriptionStatus:
-          $ref: '#/components/schemas/SubscriptionStatusEnum'
+          $ref: '#/components/schemas/EnumSubscriptionStatus'
         trialDays:
           type: integer
           description: '30'
@@ -924,6 +1480,7 @@ components:
         - parentReferenceCode
         - pricingPlanReferenceCode
         - customerReferenceCode
+        - subscriptionStatus
         - createdDate
         - startDate
         - endDate
@@ -940,10 +1497,29 @@ components:
           createdDate: 1687093881545
           startDate: 1687093881545
           endDate: 1692709881545
-    ListSubscriptionsData:
+    ListSubscriptionsPagination:
+      title: List Subscriptions Pagination
+      description: List Subscriptions Pagination
+      allOf:
+        - $ref: '#/components/schemas/PaginationResponseData'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Subscription'
+          required:
+            - items
+      x-examples:
+        Example 1:
+          totalCount: 0
+          currentPage: 1
+          pageCount: 0
+          items: []
+    PaginationResponseData:
       type: object
-      title: List Subscriptions Data
-      description: List Subscriptions Data
+      title: List Subscriptions Pagination
+      description: PaginationResponseData
       properties:
         totalCount:
           type: integer
@@ -951,70 +1527,159 @@ components:
           type: integer
         pageCount:
           type: integer
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubscriptionItemData'
       required:
         - totalCount
         - currentPage
         - pageCount
-        - items
       x-examples:
         Example 1:
           totalCount: 0
           currentPage: 1
           pageCount: 0
           items: []
-    SubscriptionItemData:
+    SubscriptionProduct:
       type: object
+      title: SubscriptionProduct
+      description: SubscriptionProduct
       properties:
         referenceCode:
           type: string
-        parentReferenceCode:
-          type: string
-        pricingPlanReferenceCode:
-          type: string
-        customerEmail:
-          type: string
-        customerReferenceCode:
-          type: string
-        subscriptionStatus:
-          $ref: '#/components/schemas/SubscriptionStatusEnum'
-        trialDays:
-          type: integer
-        trialStartDate:
-          type: integer
-        trialEndDate:
-          type: integer
+          format: uuid
         createdDate:
           type: integer
-        startDate:
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/EnumSubscriptionProductStatus'
+        pricingPlans:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionPricingPlan'
+        description:
+          type: string
+      required:
+        - referenceCode
+        - createdDate
+        - name
+        - status
+        - pricingPlans
+      x-examples:
+        Example 1:
+          referenceCode: 235dbc68-d281-4626-9c85-98002e558ce7
+          createdDate: 1675684451778
+          name: test
+          status: ACTIVE
+          pricingPlans:
+            - referenceCode: a3dde7ac-dff4-4d96-a6da-5780aeee9c9a
+              createdDate: 1675684471828
+              name: testop
+              price: 100
+              paymentInterval: MONTHLY
+              paymentIntervalCount: 1
+              trialPeriodDays: 0
+              currencyCode: TRY
+              productReferenceCode: 235dbc68-d281-4626-9c85-98002e558ce7
+              planPaymentType: RECURRING
+              status: ACTIVE
+    EnumSubscriptionProductStatus:
+      type: string
+      enum:
+        - ACTIVE
+      title: EnumSubscriptionProductStatus
+    SubscriptionPricingPlan:
+      type: object
+      title: SubscriptionPricingPlan
+      properties:
+        referenceCode:
+          type: string
+          format: uuid
+        productReferenceCode:
+          type: string
+          format: uuid
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+        createdDate:
           type: integer
-        endDate:
+        trialPeriodDays:
+          type: integer
+        paymentInterval:
+          $ref: '#/components/schemas/EnumSubscriptionPricingPlanInterval'
+        paymentIntervalCount:
+          type: integer
+        currencyCode:
+          $ref: '#/components/schemas/EnumCurrencyUnit'
+        planPaymentType:
+          $ref: '#/components/schemas/EnumSubscriptionPlanPaymentType'
+        status:
+          $ref: '#/components/schemas/EnumSubscriptionProductStatus'
+        recurrenceCount:
           type: integer
       required:
         - referenceCode
-        - parentReferenceCode
-        - pricingPlanReferenceCode
-        - customerReferenceCode
-        - subscriptionStatus
+        - productReferenceCode
+        - name
+        - price
         - createdDate
-        - startDate
-        - endDate
+        - trialPeriodDays
+        - paymentInterval
+        - paymentIntervalCount
+        - currencyCode
+        - planPaymentType
+        - status
       x-examples:
         Example 1:
-          referenceCode: string
-          parentReferenceCode: string
-          pricingPlanReferenceCode: string
-          customerEmail: string
-          customerReferenceCode: string
-          subscriptionStatus: PENDING
-          trialDays: 0
-          trialStartDate: 0
-          trialEndDate: 0
-          createdDate: 0
-          startDate: 0
-          endDate: 0
+          referenceCode: a3dde7ac-dff4-4d96-a6da-5780aeee9c9a
+          createdDate: 1675684471828
+          name: testop
+          price: 100
+          paymentInterval: MONTHLY
+          paymentIntervalCount: 1
+          trialPeriodDays: 0
+          currencyCode: TRY
+          productReferenceCode: 235dbc68-d281-4626-9c85-98002e558ce7
+          planPaymentType: RECURRING
+          status: ACTIVE
+    ListSubscriptionProductsPagination:
+      title: List Subscription Products Pagination
+      description: List Subscription Products Pagination
+      allOf:
+        - $ref: '#/components/schemas/PaginationResponseData'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/SubscriptionProduct'
+          required:
+            - items
+    ListSubscriptionPricingPlansPagination:
+      title: List Subscription Products Pagination
+      description: List Subscription Products Pagination
+      allOf:
+        - $ref: '#/components/schemas/PaginationResponseData'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/SubscriptionPricingPlan'
+          required:
+            - items
+    ListSubscriptionCustomersPagination:
+      title: List Subscription Products Pagination
+      description: List Subscription Products Pagination
+      allOf:
+        - $ref: '#/components/schemas/PaginationResponseData'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/SubscriptionCustomer'
+          required:
+            - items
 security:
   - Authorization: []
