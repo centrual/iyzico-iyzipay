@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.11
+  version: 0.1.12
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -111,20 +111,62 @@ paths:
         - url: 'https://api.iyzipay.com'
           description: Production
   /v2/subscription/subscriptions:
-    post:
+    get:
       tags:
         - Subscriptions
-      summary: List Subscriptions
-      description: Abonelikleri listeler
-      operationId: list-subscriptions
+      summary: Search In Subscriptions
+      description: Abonelikler arasında arama yapar.
+      operationId: search-in-subscriptions
       parameters:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/count'
-      requestBody:
-        $ref: '#/components/requestBodies/ListSubscriptionsRequest'
+        - name: subscriptionReferenceCode
+          in: query
+          description: Abonelik referans kodu
+          schema:
+            type: string
+            format: uuid
+        - name: startDate
+          in: query
+          description: Abonelik başlangıç tarihi.
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Abonelik bitiş tarihi.
+          schema:
+            type: string
+            format: date-time
+        - name: subscriptionStatus
+          in: query
+          description: Abonelik durumu.
+          schema:
+            type: string
+            enum:
+              - ACTIVE
+              - PENDING
+        - name: pricingPlanReferenceCode
+          in: query
+          description: Abonelikte kullanılan plan refereans numarası.
+          schema:
+            type: string
+            format: uuid
+        - name: customerReferenceCode
+          in: query
+          description: Müşteri referans kodu.
+          schema:
+            type: string
+            format: uuid
+        - name: parentReferenceCode
+          in: query
+          description: Abonelik güncellemelerinde üye işeyerinin eşleştirme yapılabileceği eşsiz referans kodu.
+          schema:
+            type: string
+            format: uuid
       responses:
         2XX:
-          $ref: '#/components/responses/ListSubscriptionsResponse'
+          $ref: '#/components/responses/SearchInSubscriptionsResponse'
         4XX:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
@@ -780,41 +822,6 @@ components:
             required:
               - upgradePeriod
               - newPricingPlanReferenceCode
-    ListSubscriptionsRequest:
-      description: ListSubscriptionsRequest
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              subscriptionReferenceCode:
-                type: string
-                description: ( Opsiyonel ) Abonelik referans kodu ile arama yapmak içindir.
-              count:
-                type: integer
-                description: Sayfa başına kaç abonelik listenelecek.
-              page:
-                type: integer
-                description: Kaçıncı sayfa
-              startDate:
-                type: string
-                format: date
-              endDate:
-                type: string
-                format: date
-              subscriptionStatus:
-                $ref: '#/components/schemas/EnumSubscriptionStatus'
-              pricingPlanReferenceCode:
-                type: string
-                description: ( Opsiyonel ) Pricing plan referans kodu
-              customerReferenceCode:
-                type: string
-                description: Müşteri referans kodu
-              parentReferenceCode:
-                type: string
-            required:
-              - count
-              - page
     ChangeCreditCardUsedInSubscriptionRequest:
       description: ChangeCreditCardUsedInSubscriptionRequest
       content:
@@ -1049,14 +1056,14 @@ components:
                 trialEndDate: 1627858923
                 createdDate: 1625246523
                 startDate: 1627858923
-    ListSubscriptionsResponse:
-      description: Example response
+    SearchInSubscriptionsResponse:
+      description: SearchInSubscriptionsResponse
       content:
         application/json:
           schema:
             allOf:
               - $ref: '#/components/schemas/StatusAndSystemTime'
-              - $ref: '#/components/schemas/ListSubscriptionsResponseFields'
+              - $ref: '#/components/schemas/SearchInSubscriptionsResponseFields'
             x-examples:
               Example 1:
                 status: success
@@ -1668,21 +1675,21 @@ components:
           $ref: '#/components/schemas/Subscription'
       required:
         - data
-    ListSubscriptionsResponseFields:
+    SearchInSubscriptionsResponseFields:
       type: object
-      title: ListSubscriptionsResponseFields
-      description: ListSubscriptionsResponseFields
+      title: SearchInSubscriptionsResponseFields
+      description: SearchInSubscriptionsResponseFields
       properties:
         data:
-          $ref: '#/components/schemas/ListSubscriptionsPagination'
+          $ref: '#/components/schemas/SearchInSubscriptionsPagination'
       required:
         - data
-    ListSubscriptionsPagination:
+    SearchInSubscriptionsPagination:
       title: List Subscriptions Pagination
       description: List Subscriptions Pagination
       allOf:
         - $ref: '#/components/schemas/PaginationResponseData'
-        - $ref: '#/components/schemas/ListSubscriptionsPaginationFields'
+        - $ref: '#/components/schemas/SearchInSubscriptionsPaginationFields'
       x-examples:
         Example 1:
           totalCount: 0
@@ -1710,10 +1717,10 @@ components:
           currentPage: 1
           pageCount: 0
           items: []
-    ListSubscriptionsPaginationFields:
+    SearchInSubscriptionsPaginationFields:
       type: object
-      title: ListSubscriptionsPaginationFields
-      description: ListSubscriptionsPaginationFields
+      title: SearchInSubscriptionsPaginationFields
+      description: SearchInSubscriptionsPaginationFields
       properties:
         items:
           type: array
