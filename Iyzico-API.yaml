@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.10
+  version: 0.1.11
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:
@@ -663,6 +663,29 @@ paths:
           description: Sandbox
         - url: 'https://api.iyzipay.com'
           description: Production
+  /payment/detail:
+    post:
+      tags:
+        - Operations
+      summary: Payment Details
+      description: iyzico'da kaydı oluşturulan bir işlemin detayları daha sonra sorgulanabilir. Bunun için ödeme sorgulama servisi kullanılabilir.
+      operationId: payment-details
+      requestBody:
+        $ref: '#/components/requestBodies/PaymentDetailsRequest'
+      responses:
+        2XX:
+          $ref: '#/components/responses/PaymentDetailsResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - Authorization: []
+      servers:
+        - url: 'https://sandbox-api.iyzipay.com'
+          description: Sandbox
+        - url: 'https://api.iyzipay.com'
+          description: Production
 tags:
   - name: Operations
     description: Operasyonlar
@@ -848,6 +871,13 @@ components:
             allOf:
               - $ref: '#/components/schemas/LocaleAndConversationId'
               - $ref: '#/components/schemas/InitializeSubscriptionRequestFields'
+    PaymentDetailsRequest:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/LocaleAndConversationId'
+              - $ref: '#/components/schemas/PaymentDetailsRequestFields'
   securitySchemes:
     Authorization:
       type: apiKey
@@ -1167,6 +1197,15 @@ components:
             allOf:
               - $ref: '#/components/schemas/StatusAndSystemTime'
               - $ref: '#/components/schemas/Subscription'
+    PaymentDetailsResponse:
+      description: PaymentDetailsResponse
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusAndSystemTime'
+              - $ref: '#/components/schemas/LocaleAndConversationId'
+              - $ref: '#/components/schemas/PaymentDetailsResponseFields'
   schemas:
     LocaleAndConversationId:
       type: object
@@ -1483,6 +1522,28 @@ components:
           description: Kart sahibi adı ve soyadı.
       required:
         - registerConsumerCard
+    PaymentDetailsRequestFields:
+      type: object
+      title: PaymentDetailsRequestFields
+      description: PaymentDetailsRequestFields
+      oneOf:
+        - type: object
+          properties:
+            paymentConversationId:
+              type: string
+              format: uuid
+            ip:
+              type: string
+          required:
+            - paymentConversationId
+        - type: object
+          properties:
+            paymentId:
+              type: string
+            ip:
+              type: string
+          required:
+            - paymentId
     StatusAndSystemTime:
       type: object
       title: StatusAndSystemTime
@@ -1934,5 +1995,235 @@ components:
             $ref: '#/components/schemas/SubscriptionCustomer'
       required:
         - items
+    PaymentDetailsResponseFields:
+      type: object
+      properties:
+        price:
+          type: number
+          format: double
+        paidPrice:
+          type: number
+          format: double
+        installment:
+          type: integer
+        paymentId:
+          type: string
+        fraudStatus:
+          type: integer
+        merchantCommissionRate:
+          type: number
+          format: double
+        merchantCommissionRateAmount:
+          type: number
+          format: double
+        iyziCommissionRateAmount:
+          type: number
+          format: double
+        iyziCommissionFee:
+          type: number
+          format: double
+        cardType:
+          type: string
+        cardAssociation:
+          type: string
+        cardFamily:
+          type: string
+        binNumber:
+          type: string
+        lastFourDigits:
+          type: string
+        basketId:
+          type: string
+          format: uuid
+        currency:
+          $ref: '#/components/schemas/EnumCurrencyUnit'
+        itemTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemTransaction'
+        authCode:
+          type: string
+        phase:
+          type: string
+        hostReference:
+          type: string
+        paymentStatus:
+          type: string
+      x-examples:
+        Example 1:
+          price: 1
+          paidPrice: 1
+          installment: 1
+          paymentId: '20885695'
+          fraudStatus: 1
+          merchantCommissionRate: 0
+          merchantCommissionRateAmount: 0
+          iyziCommissionRateAmount: 0.04
+          iyziCommissionFee: 0.25
+          cardType: CREDIT_CARD
+          cardAssociation: MASTER_CARD
+          cardFamily: Axess
+          binNumber: '552608'
+          lastFourDigits: '0006'
+          basketId: f3edeaa6-766c-4139-a66b-69ed08517258
+          currency: TRY
+          itemTransactions:
+            - ''
+          authCode: '514687'
+          phase: AUTH
+          hostReference: mock00007iyzihostrfn
+          paymentStatus: SUCCESS
+    ItemTransaction:
+      type: object
+      title: ItemTransaction
+      description: ItemTransaction
+      properties:
+        itemId:
+          type: string
+          format: uuid
+        paymentTransactionId:
+          type: string
+        transactionStatus:
+          type: integer
+        price:
+          type: number
+          format: double
+        paidPrice:
+          type: number
+          format: double
+        merchantCommissionRate:
+          type: number
+          format: double
+        merchantCommissionRateAmount:
+          type: number
+          format: double
+        iyziCommissionRateAmount:
+          type: number
+          format: double
+        iyziCommissionFee:
+          type: number
+          format: double
+        blockageRate:
+          type: number
+          format: double
+        blockageRateAmountMerchant:
+          type: number
+          format: double
+        blockageRateAmountSubMerchant:
+          type: number
+          format: double
+        blockageResolvedDate:
+          type: string
+          format: date-time
+        subMerchantPrice:
+          type: number
+          format: double
+        subMerchantPayoutRate:
+          type: number
+          format: double
+        subMerchantPayoutAmount:
+          type: number
+          format: double
+        merchantPayoutAmount:
+          type: number
+          format: double
+        convertedPayout:
+          $ref: '#/components/schemas/ConvertedPayout'
+      required:
+        - itemId
+        - paymentTransactionId
+        - transactionStatus
+        - price
+        - paidPrice
+        - merchantCommissionRate
+        - merchantCommissionRateAmount
+        - iyziCommissionRateAmount
+        - iyziCommissionFee
+        - blockageRate
+        - blockageRateAmountMerchant
+        - blockageRateAmountSubMerchant
+        - blockageResolvedDate
+        - subMerchantPrice
+        - subMerchantPayoutRate
+        - subMerchantPayoutAmount
+        - merchantPayoutAmount
+        - convertedPayout
+      x-examples:
+        Example 1:
+          itemId: 7ab0ee59-18b4-4e30-9ca8-04197bb34127
+          paymentTransactionId: '22599895'
+          transactionStatus: 2
+          price: 1
+          paidPrice: 1
+          merchantCommissionRate: 0
+          merchantCommissionRateAmount: 0
+          iyziCommissionRateAmount: 0.04
+          iyziCommissionFee: 0.25
+          blockageRate: 0
+          blockageRateAmountMerchant: 0
+          blockageRateAmountSubMerchant: 0
+          blockageResolvedDate: '2023-10-28 00:00:00'
+          subMerchantPrice: 0
+          subMerchantPayoutRate: 0
+          subMerchantPayoutAmount: 0
+          merchantPayoutAmount: 0.71
+          convertedPayout: ''
+    ConvertedPayout:
+      type: object
+      title: ConvertedPayout
+      description: ConvertedPayout
+      properties:
+        paidPrice:
+          type: number
+          format: double
+        iyziCommissionRateAmount:
+          type: number
+          format: double
+        iyziCommissionFee:
+          type: number
+          format: double
+        blockageRateAmountMerchant:
+          type: number
+          format: double
+        blockageRateAmountSubMerchant:
+          type: number
+          format: double
+        subMerchantPayoutAmount:
+          type: number
+          format: double
+        merchantPayoutAmount:
+          type: number
+          format: double
+        iyziConversionRate:
+          type: number
+          format: double
+        iyziConversionRateAmount:
+          type: number
+          format: double
+        currency:
+          $ref: '#/components/schemas/EnumCurrencyUnit'
+      required:
+        - paidPrice
+        - iyziCommissionRateAmount
+        - iyziCommissionFee
+        - blockageRateAmountMerchant
+        - blockageRateAmountSubMerchant
+        - subMerchantPayoutAmount
+        - merchantPayoutAmount
+        - iyziConversionRate
+        - iyziConversionRateAmount
+        - currency
+      x-examples:
+        Example 1:
+          paidPrice: 1
+          iyziCommissionRateAmount: 0.04
+          iyziCommissionFee: 0.25
+          blockageRateAmountMerchant: 0
+          blockageRateAmountSubMerchant: 0
+          subMerchantPayoutAmount: 0
+          merchantPayoutAmount: 0.71
+          iyziConversionRate: 0
+          iyziConversionRateAmount: 0
+          currency: TRY
 security:
   - Authorization: []
