@@ -60,7 +60,7 @@ paths:
         - url: 'https://api.iyzipay.com'
           description: Production
   '/v2/subscription/checkoutform/{token}':
-    post:
+    get:
       tags:
         - Subscription Initialization
       summary: Check Subscription Checkout Form
