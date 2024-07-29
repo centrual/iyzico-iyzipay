@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.1.13
+  version: 0.1.14
   title: Iyzico API
   description: Iyzico Open API Declaration
   contact:

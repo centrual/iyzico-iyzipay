@@ -41,14 +41,21 @@ jobs:
           openapi-generator-cli generate -i "$OPEN_API_FILE_PATH" -g typescript-axios -c "$OPEN_API_GENERATE_CONFIG" -o "$OPEN_API_GENERATE_DIRECTORY"
           cd "$OPEN_API_GENERATE_DIRECTORY"
           
-          jq --arg OPEN_API_PACKAGE_NAME "$OPEN_API_PACKAGE_NAME" '.name = $OPEN_API_PACKAGE_NAME' package.json > tmpfile && mv tmpfile package.json
-          sed -i 's/OpenAPI\-Generator Contributors/Oğuz Özcan <oguz.ozcan@vennyx\.com>/' package.json
-          sed -i 's/    "prepare": "npm run build"//' package.json
-          sed -i 's/outDir dist\/",/outDir dist\/"/' package.json
-          sed -i "s/1\.0\.0/$PACKAGE_VERSION/" package.json
-          sed -i 's/\.\/dist\//\.\//' package.json
-          sed -i 's/\.esm\.json",/\.esm\.json"/' package.json
-          sed -i 's/\.",/\.", "moduleResolution": "Node",/' tsconfig.json
+          jq --arg PACKAGE_VERSION "$PACKAGE_VERSION" '
+          .main = "./index.js" |
+          .typings = "./index.d.ts" |
+          .module = "./esm/index.js" |
+          del(.scripts.prepare) |
+          .scripts.build = "tsc" |
+          .author = "Oğuz Özcan <oguz.ozcan@vennyx.com>" |
+          .version = $PACKAGE_VERSION
+          ' package.json > tmpfile && mv tmpfile package.json
+          
+          jq '
+          .compilerOptions.target = "ESNext" |
+          .compilerOptions.module = "ESNext" |
+          .compilerOptions.moduleResolution = "Bundler"
+          ' tsconfig.json > tmpfile && mv tmpfile tsconfig.json
           
           yarn add -E axios@latest
           yarn add -E -D @types/node@latest typescript@latest
