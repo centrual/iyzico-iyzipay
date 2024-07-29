@@ -46,16 +46,9 @@ jobs:
           .typings = "./index.d.ts" |
           .module = "./esm/index.js" |
           del(.scripts.prepare) |
-          .scripts.build = "tsc" |
           .author = "Oğuz Özcan <oguz.ozcan@vennyx.com>" |
           .version = $PACKAGE_VERSION
           ' package.json > tmpfile && mv tmpfile package.json
-          
-          jq '
-          .compilerOptions.target = "ESNext" |
-          .compilerOptions.module = "ESNext" |
-          .compilerOptions.moduleResolution = "Bundler"
-          ' tsconfig.json > tmpfile && mv tmpfile tsconfig.json
           
           yarn add -E axios@latest
           yarn add -E -D @types/node@latest typescript@latest
